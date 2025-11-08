@@ -368,9 +368,9 @@
     "_opacity": 255,
     "_color": {
       "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
+      "r": 233,
+      "g": 89,
+      "b": 89,
       "a": 255
     },
     "_contentSize": {
@@ -388,7 +388,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        594.439,
+        563.901,
         0,
         0,
         0,
@@ -485,7 +485,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        -588.377,
+        609.306,
         0,
         0,
         0,
@@ -1175,7 +1175,7 @@
     "_id": "e2jOcR4BNE5r/tQWAJg0X2"
   },
   {
-    "__type__": "41a8fdqOwJLe4W4Hysj9391",
+    "__type__": "131eeBXq2BE2a/N4jrndOTr",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -1184,17 +1184,25 @@
     "_enabled": true,
     "content": null,
     "useVirtualList": true,
+    "direction": 0,
     "itemPrefab": {
-      "__uuid__": "7aec29a2-f453-4e37-ace0-1a4494e3dadc"
+      "__uuid__": "ad36642a-6991-44b4-8507-f99afaf7e045"
     },
-    "useItemClickEffect": true,
+    "useDynamicSize": false,
     "useDynamicHeight": false,
     "itemPrefabs": [],
-    "columns": 1,
-    "columnSpacing": 8,
+    "gridCount": 1,
+    "gridSpacing": 8,
     "spacing": 8,
     "totalCount": 50,
-    "buffer": 2,
+    "buffer": 1,
+    "enablePullRefresh": false,
+    "pullRefreshThreshold": 100,
+    "pullRefreshMaxOffset": 150,
+    "enableLoadMore": false,
+    "loadMoreThreshold": 100,
+    "loadMoreMaxOffset": 150,
+    "pullDampingRate": 0.5,
     "pixelAlign": true,
     "inertiaDampK": 1,
     "springK": 150,
@@ -1203,7 +1211,7 @@
     "velocityWindow": 0.08,
     "maxVelocity": 6000,
     "useIOSDecelerationCurve": true,
-    "_id": "05onl1O5VJ1Lx0CM0wd4bZ"
+    "_id": "851PhAWd5DyqL6PWSB0zvj"
   },
   {
     "__type__": "cc.Node",

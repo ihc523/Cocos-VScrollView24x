@@ -1,34 +1,18 @@
-// Cocos Creator 2.4.14 API 风格
 const { ccclass } = cc._decorator;
 
-/**
- * 更改UI节点的渲染排序层级
- * 注意：Cocos Creator 2.4.14 不支持 Sorting2D 组件，此功能已屏蔽
- * 如需实现类似功能，可以使用 zIndex 或其他方式
- * @param sortingNode cc.Node
- * @param sortingLayer number
- * @param sortingOrder number
- */
-export function changeUISortingLayer(
-  sortingNode: cc.Node,
-  sortingLayer: number,
-  sortingOrder?: number
-) {
-  // [已屏蔽] Cocos Creator 2.4.14 不支持 settings.querySettings 和 Sorting2D
-  // 在 2.4.14 中，可以使用 node.zIndex 来控制渲染顺序
-  // 如果需要实现类似功能，可以考虑使用以下方式：
-  // sortingNode.zIndex = sortingOrder || 0;
-
-  console.warn(
-    '[VScrollViewItem] changeUISortingLayer 在 Cocos Creator 2.4.14 中不支持 Sorting2D，已屏蔽此功能'
-  );
+//已尝试使用单独的相机来渲染子项的所有Label,渲染没有问题 ,但是drawcall并没有减少,不知道为什么
+export function changeUISortingLayer(sortingNode: cc.Node, sortingLayer: number, sortingOrder?: number) {
+  // Creator 2.4.x 无 Sorting2D 组件，改用 zIndex 作为替代。
+  // if (sortingOrder !== undefined) {
+  // sortingNode.zIndex = sortingOrder;
+  // }
 }
 
 /**
  * 挂载在每个 item 预制体的根节点上
  * 负责处理点击逻辑，通过回调通知父组件
  */
-@ccclass
+@ccclass('VScrollViewItem')
 export class VScrollViewItem extends cc.Component {
   /** 当前 item 对应的数据索引 */
   public dataIndex: number = -1;
@@ -40,11 +24,11 @@ export class VScrollViewItem extends cc.Component {
 
   private _touchStartNode: cc.Node | null = null;
   private _isCanceled: boolean = false;
-  private _startPos: cc.Vec2 = cc.v2();
+  private _startPos: cc.Vec2 = new cc.Vec2();
   private _moveThreshold: number = 40; // 滑动阈值
   private _clickThreshold: number = 10; // 点击阈值
 
-  onLoad() {
+  onEnable() {
     // 一次性注册事件，生命周期内不变
     this.node.on(cc.Node.EventType.TOUCH_START, this._onTouchStart, this);
     this.node.on(cc.Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
@@ -52,11 +36,11 @@ export class VScrollViewItem extends cc.Component {
     this.node.on(cc.Node.EventType.TOUCH_CANCEL, this._onTouchCancel, this);
   }
 
-  start(): void {
-    this.onSortLayer();
+  protected start(): void {
+    // this.onSortLayer();
   }
 
-  onDestroy() {
+  onDisable() {
     // 清理事件
     this.node.off(cc.Node.EventType.TOUCH_START, this._onTouchStart, this);
     this.node.off(cc.Node.EventType.TOUCH_MOVE, this._onTouchMove, this);
@@ -66,30 +50,24 @@ export class VScrollViewItem extends cc.Component {
 
   /**
    * 将所有子节点的 Label 组件渲染单独排序在一起,并且item的每个lable组件都独立一个orderNumber,以免交错断合批
-   * [已屏蔽] Cocos Creator 2.4.14 不支持 Sorting2D，此功能已屏蔽
    * @param node
    */
   public onSortLayer() {
-    // [已屏蔽] Cocos Creator 2.4.14 不支持 Sorting2D
-    // 如需实现类似功能，可以考虑使用 zIndex
-    // let orderNumber = 1;
-    // const labels = this.node.getComponentsInChildren(cc.Label);
-    // for (let i = 0; i < labels.length; i++) {
-    //   changeUISortingLayer(labels[i].node, 0, orderNumber);
-    //   orderNumber++;
-    // }
+    let orderNumber = 1;
+    const labels = this.node.getComponentsInChildren(cc.Label);
+    for (let i = 0; i < labels.length; i++) {
+      changeUISortingLayer(labels[i].node, 0, orderNumber);
+      orderNumber++;
+    }
   }
 
-  /** 关闭渲染分层
-   * [已屏蔽] Cocos Creator 2.4.14 不支持 Sorting2D，此功能已屏蔽
-   */
+  /** 关闭渲染分层 */
   public offSortLayer() {
-    // [已屏蔽] Cocos Creator 2.4.14 不支持 Sorting2D
-    // let orderNumber = 0;
-    // const labels = this.node.getComponentsInChildren(cc.Label);
-    // for (let i = 0; i < labels.length; i++) {
-    //   changeUISortingLayer(labels[i].node, 0, orderNumber);
-    // }
+    let orderNumber = 0;
+    const labels = this.node.getComponentsInChildren(cc.Label);
+    for (let i = 0; i < labels.length; i++) {
+      changeUISortingLayer(labels[i].node, 0, orderNumber);
+    }
   }
 
   /** 外部调用：更新数据索引 */
@@ -101,7 +79,8 @@ export class VScrollViewItem extends cc.Component {
     // console.log("_onTouchStart");
     this._touchStartNode = this.node;
     this._isCanceled = false;
-    this._startPos = e.getLocation();
+    const location = e.getLocation();
+    this._startPos.set(location);
 
     // 缩放反馈（假设第一个子节点是内容容器）
     if (this.useItemClickEffect && this.node.children.length > 0) {

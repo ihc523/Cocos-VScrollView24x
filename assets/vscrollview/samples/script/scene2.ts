@@ -1,9 +1,8 @@
-// Cocos Creator 2.4.14 API 风格
 import { VirtualScrollView } from '../../VScrollView';
 import UIButton from './UIButton';
 const { ccclass, property } = cc._decorator;
 
-@ccclass
+@ccclass('scene2')
 export class scene2 extends cc.Component {
   @property(VirtualScrollView)
   vlist: VirtualScrollView | null = null;
@@ -11,11 +10,13 @@ export class scene2 extends cc.Component {
   //列表数据
   private data: any[] = [];
 
+  private renderOptOnOff = true;
+
   onLoad() {
     // 模拟数据
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 40; i++) {
       this.data.push({
-        data1: `重要通知${i + 1}`,
+        data1: `第${i + 1}条数据`,
         data2: `2025.10.${1 + i}`,
         type: (i % 3) + 1, //你的数据中要能知道自己对应什么item的预制体
       });
@@ -23,31 +24,28 @@ export class scene2 extends cc.Component {
 
     // 设置虚拟列表数据
     if (this.vlist) {
-      //不等高子项模式需要数据和每一项使用的子项预制体匹配上,所以定需要提供provideNodeFn
-      this.vlist.provideNodeFn = (index: number) => {
+      // 数据中的type对应预制体数组中的索引(第几个预制体)
+      this.vlist.getItemTypeIndexFn = (index: number) => {
         const itemdata = this.data[index];
-        if (itemdata.type === 1) {
-          return cc.instantiate(this.vlist.itemPrefabs[0]);
-        } else if (itemdata.type === 2) {
-          return cc.instantiate(this.vlist.itemPrefabs[1]);
-        } else if (itemdata.type === 3) {
-          return cc.instantiate(this.vlist.itemPrefabs[2]);
-        }
+        return itemdata.type - 1; // 返回 0, 1, 2
       };
 
       this.vlist.renderItemFn = (itemNode: cc.Node, index: number) => {
         const itemdata = this.data[index];
         if (itemdata.type === 1) {
-          const title = itemNode.getChildByName('title').getComponent(cc.Label);
+          const title = itemNode.getChildByName('title');
+          const titleLabel = title.getComponent(cc.Label);
           const time = itemNode.getChildByName('time').getComponent(cc.Label);
-          title!.string = '类型1:' + this.data[index].data1;
+          titleLabel!.string = '类型1:' + this.data[index].data1;
           time!.string = this.data[index].data2;
         } else if (itemdata.type === 2) {
-          const title = itemNode.getChildByName('title').getComponent(cc.Label);
-          title!.string = '类型2:' + this.data[index].data1;
+          const title = itemNode.getChildByName('title');
+          const titleLabel = title.getComponent(cc.Label);
+          titleLabel!.string = '类型2:' + this.data[index].data1;
         } else if (itemdata.type === 3) {
-          const msg = itemNode.getChildByName('msg').getComponent(cc.Label);
-          msg!.string = '类型3：' + this.data[index].data1;
+          const msg = itemNode.getChildByName('msg');
+          const msgLabel = msg.getComponent(cc.Label);
+          msgLabel!.string = '类型3：' + this.data[index].data1;
         }
       };
 
@@ -70,6 +68,24 @@ export class scene2 extends cc.Component {
 
     UIButton.onClicked(this.node.getChildByName('btn3'), (button: UIButton) => {
       this.vlist.scrollToIndex(10 - 1, true);
+    });
+
+    UIButton.onClicked(this.node.getChildByName('btn4'), (button: UIButton) => {
+      this.renderOptOnOff = !this.renderOptOnOff;
+      const tip = this.node.getChildByName('tip').getComponent(cc.Label);
+      tip.string = `分层优化:${this.renderOptOnOff ? '开启' : '关闭'}`;
+      this.vlist.onOffSortLayer(this.renderOptOnOff);
+    });
+
+    UIButton.onClicked(this.node.getChildByName('btn5'), (button: UIButton) => {
+      this.data.push({
+        data1: `新增数据: 第${this.data.length + 1}条数据`,
+        data2: `2025.10.${this.data.length + 1}`,
+        type: (this.data.length % 3) + 1,
+      });
+      this.vlist.flashToBottom();
+      this.vlist.refreshList(this.data);
+      this.vlist.scrollToBottom(true);
     });
   }
 }

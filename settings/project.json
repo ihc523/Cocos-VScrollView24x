@@ -2,6 +2,10 @@
   "collision-matrix": [
     [
       true
+    ],
+    [
+      false,
+      false
     ]
   ],
   "excluded-modules": [
@@ -12,7 +16,8 @@
     "3D Particle"
   ],
   "group-list": [
-    "default"
+    "default",
+    "VLIST_LABEL"
   ],
   "design-resolution-width": 720,
   "design-resolution-height": 1280,
@@ -38,6 +43,5 @@
     }
   },
   "preview-port": 7456,
-  "clear-simulator-cache": true,
-  "start-scene": "current"
+  "clear-simulator-cache": true
 }
